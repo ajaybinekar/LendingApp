@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   require 'sidekiq/web'
   devise_for :users
@@ -12,6 +14,6 @@ Rails.application.routes.draw do
       post :request_readjustment
     end
   end
-  root 'loans#index' 
-    mount Sidekiq::Web => '/sidekiq'
+  root 'loans#index'
+  mount Sidekiq::Web => '/sidekiq'
 end
