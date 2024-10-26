@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Loan Management System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+</head>
+<body>
+  <header>
+    <nav style="background-color: #d2b48c; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <a href="<%= root_path %>" style="color: white; font-weight: bold; text-decoration: none;">Loan System</a>
+      </div>
+      <div style="display: flex; align-items: center;">
+        <% if user_signed_in? %>
+          <span style="color: white; margin-right: 15px;">Welcome, <%= current_user.email %></span>
+          <%= button_to "Log Out", destroy_user_session_path, method: :delete, 'data-turbo-method': :delete, style: "color: white; background: none; border: none; cursor: pointer; text-decoration: underline;" %>
+        <% else %>
+          <%= link_to 'Login', new_user_session_path, style: "color: white; margin-left: 15px;" %>
+        <% end %>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    <%= yield %>
+  </div>
+
+  <footer style="text-align: center; padding: 20px; background-color: #f5f5f5;">
+    <p>&copy; 2024 Loan Management System</p>
+  </footer>
+</body>
+</html>

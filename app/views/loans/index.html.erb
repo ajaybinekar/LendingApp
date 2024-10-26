@@ -1,0 +1,62 @@
+<h1>Loan Requests</h1>
+<% if user_signed_in? && !current_user.admin? %>
+  <%= link_to 'New Loan', new_loan_path, class: 'btn btn-primary btn-lg', style: 'margin-bottom: 20px;' %>
+<% end %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Amount</th>
+      <th>Interest Rate</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @loans.each do |loan| %>
+      <tr>
+        <td><%= loan.amount %></td>
+        <td><%= loan.interest_rate %></td>
+        <td><%= loan.status.humanize %></td>
+        <td>
+          <% if loan.status == "requested" && current_user.admin? %>
+             <%= button_to "Approve", approve_loan_path(loan), method: :post, class: 'btn btn-success btn-sm', data: { confirm: "Are you sure you want to approve this loan?" } %>
+            <%= button_to "Reject", reject_adjustment_loan_path(loan), method: :post, class: 'btn btn-danger btn-sm' %>
+            <%= form_with(url: adjust_loan_path(loan), local: true) do |form| %>
+              <div class="form-group">
+                <%= form.label :amount %>
+                <%= form.number_field 'adjustment[amount]', step: 0.01, required: true, class: 'form-control' %>
+              </div>
+              <div class="form-group">
+                <%= form.label :interest_rate %>
+                <%= form.number_field 'adjustment[interest_rate]', step: 0.01, required: true, class: 'form-control' %>
+              </div>
+              <%= form.submit 'Adjust Loan', class: 'btn btn-warning btn-sm' %>
+            <% end %>
+            <% elsif loan.status == "open" && current_user.admin? %>
+            <%= button_to "Reject", reject_adjustment_loan_path(loan), method: :post, class: 'btn btn-danger btn-sm' %>
+
+          <% elsif loan.status == "waiting_for_adjustment_acceptance" && current_user.admin? %>
+            <p>Adjustment pending acceptance from the user.</p>
+            <%= button_to "Reject Adjustment", reject_adjustment_loan_path(loan), method: :post, class: 'btn btn-danger btn-sm' %>
+          <% elsif loan.status == "waiting_for_adjustment_acceptance" && loan.user == current_user %>
+            <p>Adjustment proposed by admin:</p>
+            <ul>
+              <li>New Amount: <%= loan.adjustments.last.amount %></li>
+              <li>New Interest Rate: <%= loan.adjustments.last.interest_rate %></li>
+            </ul>
+            <%= button_to "Accept Adjustment", accept_adjustment_loan_path(loan), method: :post, class: 'btn btn-success btn-sm' %>
+            <%= button_to "Reject Adjustment", reject_adjustment_loan_path(loan), method: :post, class: 'btn btn-danger btn-sm' %>
+            <% elsif loan.status == "approved" && loan.user == current_user %>
+            <%= button_to "Confirm", accept_adjustment_loan_path(loan), method: :post, class: 'btn btn-success btn-sm' %>
+            <%= button_to "Reject", reject_adjustment_loan_path(loan), method: :post, class: 'btn btn-danger btn-sm' %>
+
+          <% elsif loan.status == "open" && loan.user == current_user %>
+            <%= button_to "Repay", repay_loan_path(loan), method: :post, class: 'btn btn-warning btn-sm' %>
+          <% end %>
+          
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

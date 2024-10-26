@@ -1,0 +1,26 @@
+<h1>Loan Adjustments for <%= @loan.user.name %></h1>
+
+<p>Loan Amount: <%= @loan.amount %></p>
+<p>Current Interest Rate: <%= @loan.interest_rate %></p>
+<p>Status: <%= @loan.status.humanize %></p>
+
+<h2>Adjustment History</h2>
+<table>
+  <thead>
+    <tr>
+      <th>New Amount</th>
+      <th>New Interest Rate</th>
+      <th>Adjusted At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @loan.adjustments.each do |adjustment| %>
+      <tr>
+        <td><%= adjustment.amount %></td>
+        <td><%= adjustment.interest_rate %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Back to Loan', loan_path(@loan), class: 'btn btn-secondary' %>

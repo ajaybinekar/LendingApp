@@ -1,0 +1,8 @@
+---
+:queues:
+  - default
+
+:schedule:
+  calculate_interest:
+    cron: '*/5 * * * *'
+    class: InterestCalculatorJob
